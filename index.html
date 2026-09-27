@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Ujjawal — Data Analyst. SQL, Python, Power BI. Open to opportunities.">
+<title>Ujjawal · Data Analyst</title>
+<!-- =========================================================
+     SINGLE-FILE PORTFOLIO — all CSS and JS are inline, no build.
+     Open it by double-clicking, or host the file on GitHub Pages.
+     TO EDIT TEXT LATER: each section below is clearly labelled.
+     TO CHANGE COLOURS: edit the :root block just below.
+     ========================================================= -->
+<style>
+:root{
+  /* ---- THEME COLOURS (edit here) ---- */
+  --canvas:#F4F6FA;      /* page background            */
+  --navy:#1F2A44;        /* headings & body text       */
+  --teal:#2FB4A6;        /* accent: borders, highlights*/
+  --teal-ink:#177669;    /* darker teal for text on white (contrast-safe) */
+  --card:#FFFFFF;        /* card background            */
+  --muted:#5B6478;       /* secondary text             */
+  --line:#E1E6EF;        /* hairline borders           */
+  /* ---- shape & type ---- */
+  --radius:14px;
+  --shadow:0 1px 2px rgba(31,42,68,.05),0 4px 14px rgba(31,42,68,.05);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SF Mono","Cascadia Code","Fira Code",Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;font-family:var(--sans);color:var(--navy);line-height:1.6;
+  background-color:var(--canvas);
+  /* faint graph-paper grid texture */
+  background-image:
+    linear-gradient(rgba(31,42,68,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(31,42,68,.03) 1px,transparent 1px);
+  background-size:26px 26px;
+}
+h1,h2,h3{line-height:1.2;margin:0 0 .4em;}
+h2{font-size:1.6rem;}
+p{margin:0 0 1em;}
+a{color:var(--teal-ink);}
+code,pre,.mono{font-family:var(--mono);}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px;}
+section{padding:72px 0;scroll-margin-top:72px;}
+.section-title{display:flex;align-items:center;gap:12px;}
+.section-title::before{content:"";width:22px;height:3px;background:var(--teal);border-radius:2px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;}
+
+/* --- sticky top nav --- */
+header.nav{position:sticky;top:0;z-index:50;background:rgba(244,246,250,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+.nav .wrap{display:flex;align-items:center;gap:16px;height:60px;}
+.brand{font-family:var(--sans);font-weight:700;font-size:1.05rem;color:var(--navy);text-decoration:none;white-space:nowrap;}
+.nav nav{margin-left:auto;display:flex;gap:4px;overflow-x:auto;}
+.nav nav a{color:var(--navy);text-decoration:none;font-size:.9rem;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+.nav nav a:hover{background:rgba(47,180,166,.12);color:var(--teal-ink);}
+
+/* --- buttons --- */
+.btn{display:inline-block;font:inherit;font-weight:600;cursor:pointer;padding:11px 18px;border-radius:10px;text-decoration:none;border:2px solid var(--navy);transition:transform .15s,box-shadow .15s;}
+.btn-primary{background:var(--navy);color:#fff;}
+.btn-secondary{background:transparent;color:var(--navy);border-color:var(--teal);}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+.btn-small{padding:7px 13px;font-size:.85rem;border-width:1px;border-radius:8px;}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+/* --- gate: the ONLY thing on the first screen is the SQL editor card --- */
+.gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.gate .editor{max-width:640px;width:100%;margin:0;}
+/* --- intro band (revealed after the query runs) --- */
+.intro-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center;}
+.eyebrow{font-family:var(--mono);font-size:.85rem;color:var(--teal-ink);letter-spacing:.02em;margin-bottom:.7em;}
+.tagline{font-size:2rem;font-weight:700;margin:0 0 .25em;}
+.subtag{color:var(--muted);font-size:1.05rem;}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;}
+/* Progressive-enhancement gate: hide everything but the card until JS reveals
+   it. If JS is OFF, .js is never added, nothing is hidden, and the whole page
+   shows normally — the gate simply doesn't apply. */
+html.js .gated{display:none;}
+html.js.revealed .gated{display:block;}
+html.js.revealed #post{animation:fadeUp .6s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+/* --- dark SQL editor card --- */
+.editor{background:#16203a;color:#e7ecf5;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;font-family:var(--mono);margin-top:20px;}
+.editor .bar{display:flex;gap:7px;padding:11px 14px;background:#0f1830;}
+.editor .dot{width:11px;height:11px;border-radius:50%;}
+.editor .dot.r{background:#ff5f57;}.editor .dot.y{background:#febc2e;}.editor .dot.g{background:#28c840;}
+.editor .body{padding:16px;font-size:.9rem;min-height:52px;word-break:break-word;}
+.editor .prompt{color:var(--teal);}
+.cursor{display:inline-block;width:8px;height:1.05em;background:var(--teal);vertical-align:text-bottom;animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+.running{color:#febc2e;padding:0 16px 12px;font-size:.85rem;display:none;}
+/* "Run query" call-to-action inside the hero editor (shown after typing) */
+.run-row{display:none;padding:0 16px 14px;}
+.btn-run{font-family:var(--mono);font-size:.85rem;font-weight:700;cursor:pointer;background:var(--teal);color:#08211d;border:none;padding:8px 15px;border-radius:8px;transition:transform .15s,filter .15s;}
+.btn-run:hover{transform:translateY(-1px);filter:brightness(1.08);}
+
+/* --- result tables (hero uses the dark variant) --- */
+.result{margin:0 16px 16px;opacity:0;transform:translateY(10px);transition:.5s;}
+.result.show{opacity:1;transform:none;}
+table.data{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.82rem;}
+table.data th,table.data td{border:1px solid #2b3757;padding:7px 9px;text-align:left;color:#e7ecf5;}
+table.data th{background:#0f1830;color:var(--teal);}
+
+/* --- KPI stat cards --- */
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.kpi{text-align:center;padding:18px 12px;}
+.kpi .num{font-family:var(--mono);font-size:2rem;font-weight:700;color:var(--teal-ink);}
+.kpi .label{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+/* --- skills --- */
+.skill-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.skill-groups h3{font-size:1rem;color:var(--teal-ink);}
+.tag{display:inline-block;background:#eef1f6;color:var(--navy);border:1px solid var(--line);border-radius:8px;padding:5px 11px;margin:4px 4px 0 0;font-size:.85rem;}
+
+/* --- projects --- */
+.projects{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.project .tech{font-family:var(--mono);font-size:.8rem;color:var(--teal-ink);margin-bottom:8px;}
+.project .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+/* --- experience timeline --- */
+.timeline{border-left:2px solid var(--line);margin-left:8px;}
+.tl-item{position:relative;padding:0 0 26px 26px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{content:"";position:absolute;left:-7px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--teal);border:2px solid var(--card);}
+.tl-item .when{font-family:var(--mono);font-size:.8rem;color:var(--muted);}
+.tl-item h3{font-size:1.1rem;margin:.2em 0;}
+.tl-item .org{color:var(--teal-ink);font-weight:600;}
+
+/* --- education & certifications --- */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.cert{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);}
+.cert:last-child{border-bottom:none;}
+.cert .year{font-family:var(--mono);color:var(--muted);}
+
+/* --- contact (dark closing section) --- */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);border:0;}
+.contact{background:var(--navy);color:#c9d2e6;}
+.contact svg{stroke-linecap:round;stroke-linejoin:round;}
+.contact h2{color:#fff;}
+.contact .subtag{color:#aab4cd;}
+.contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:start;}
+.contact-info .row{display:flex;align-items:center;gap:11px;margin:0 0 14px;}
+.contact-info .row svg{flex:none;color:var(--teal);}
+.contact-info a{color:#fff;text-decoration:none;}
+.contact-info a:hover{color:var(--teal);}
+.socials{display:flex;gap:12px;margin:20px 0 24px;}
+.socials a{display:inline-flex;width:42px;height:42px;align-items:center;justify-content:center;color:#fff;border:1px solid #33415f;border-radius:10px;transition:background .15s,border-color .15s,transform .15s;}
+.socials a:hover{background:rgba(47,180,166,.16);border-color:var(--teal);transform:translateY(-1px);}
+.contact form{display:grid;gap:14px;}
+.contact input,.contact textarea{width:100%;font:inherit;color:#fff;background:#26324f;border:1px solid #34425f;border-radius:10px;padding:12px 14px;}
+.contact textarea{min-height:150px;resize:vertical;}
+.contact input::placeholder,.contact textarea::placeholder{color:#8b97b5;}
+.contact input:focus,.contact textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 2px rgba(47,180,166,.4);}
+.contact .btn-teal{justify-self:start;display:inline-block;font:inherit;font-weight:700;cursor:pointer;background:var(--teal);color:#08211d;border:none;padding:12px 22px;border-radius:10px;text-decoration:none;transition:transform .15s,filter .15s;}
+.contact .btn-teal:hover{transform:translateY(-1px);filter:brightness(1.07);}
+.form-note{margin:0;font-size:.82rem;color:#8b97b5;}
+/* --- footer --- */
+footer{background:var(--navy);color:#8b97b5;padding:22px 0;border-top:1px solid rgba(255,255,255,.08);text-align:center;}
+footer a{color:#fff;text-decoration:none;border-bottom:1px solid var(--teal);}
+
+/* --- scroll-reveal, reduced-motion & focus (accessibility) --- */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s;}
+.reveal.in{opacity:1;transform:none;}
+@media(max-width:760px){
+  .intro-grid,.projects,.grid-2,.skill-groups,.contact-grid{grid-template-columns:1fr;}
+  h2{font-size:1.4rem;} .tagline{font-size:1.6rem;}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+  .reveal,.result{opacity:1;transform:none;}
+}
+:focus-visible{outline:2px solid var(--teal-ink);outline-offset:2px;}
+</style>
+</head>
+<body>
+<!-- Progressive enhancement: flag that JS is on. If JS is OFF, this never runs,
+     nothing is hidden, and the whole page shows normally (the gate is skipped). -->
+<script>document.documentElement.classList.add("js");</script>
+
+<!-- ============ STICKY TOP NAV (revealed after the query runs) ============ -->
+<header class="nav gated">
+  <div class="wrap">
+    <a class="brand" href="#top">Ujjawal</a>
+    <nav aria-label="Section navigation">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#education">Education</a>
+      <a href="#certs">Certifications</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+<!-- ============ GATE — first screen shows ONLY this SQL editor card ============ -->
+<section class="gate" aria-label="Start: run the query to open the portfolio">
+  <div class="editor" role="group" aria-label="Run this SQL query to open Ujjawal's portfolio">
+    <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+    <div class="body"><span class="prompt">sqlite&gt;</span> <span id="typed-sql"></span><span class="cursor" id="hero-cursor" aria-hidden="true"></span></div>
+    <!-- Run button appears once the query finishes typing; clicking it opens the site -->
+    <div class="run-row" id="hero-run-row"><button class="btn-run" id="hero-run" type="button" aria-label="Run the query to open the portfolio">&#9654; Run query</button></div>
+    <div class="running" id="hero-running">Running…</div>
+    <!-- the one result row is revealed by JS after the visitor clicks Run -->
+    <div class="result" id="hero-result">
+      <table class="data">
+        <thead><tr><th>name</th><th>role</th><th>education</th><th>core_skills</th><th>status</th></tr></thead>
+        <tbody><tr><td>Ujjawal</td><td>Data Analyst</td><td>B.Tech CSE (2026)</td><td>SQL, Python, Power BI</td><td>Open to opportunities</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Everything below is hidden until the visitor runs the query above. -->
+<div id="post" class="gated">
+
+<!-- ============ INTRO ============ -->
+<section id="intro" class="reveal">
+  <div class="wrap">
+    <div class="intro-grid">
+      <div>
+        <p class="eyebrow">// Ujjawal · Data Analyst</p>
+        <h1 class="tagline">I turn messy data into dashboards people can actually read.</h1>
+        <p class="subtag">SQL · Python · Power BI · Excel — plus a stubborn habit of double-checking every number.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#projects">View projects</a>
+          <a class="btn btn-secondary" href="#contact">Get in touch</a>
+        </div>
+      </div>
+      <div class="kpis" aria-label="Quick stats">
+        <div class="card kpi"><div class="num" data-target="2">2</div><div class="label">Featured Projects</div></div>
+        <div class="card kpi"><div class="num" data-target="2">2</div><div class="label">Internships</div></div>
+        <div class="card kpi"><div class="num" data-target="2">2</div><div class="label">Certifications</div></div>
+        <div class="card kpi"><div class="num mono">SQL</div><div class="label">Primary Skill</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ ABOUT ============ -->
+<section id="about" class="reveal">
+  <div class="wrap">
+    <h2 class="section-title">About</h2>
+    <div class="card">
+      <p>I wrapped up my B.Tech in Computer Science in 2026 and pointed it straight at data. Most of my time now goes into SQL, Excel and Power BI, with Python — Pandas and NumPy — for the heavier lifting.</p>
+      <p>I've done a remote database internship spanning SQL and MongoDB, and taken two projects from idea to something you can actually click: a Power BI sales dashboard built on a sample retail store, and Pardarshita, a railway-booking app backed by a SQL database with its own live dashboard. The part I enjoy most is the unglamorous one — chasing down dirty data until the final numbers are ones you'd trust. I'm looking for my first full-time Data Analyst role.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKILLS (grouped, no mastery bars) ============ -->
+<section id="skills" class="reveal">
+  <div class="wrap">
+    <h2 class="section-title">Skills</h2>
+    <div class="skill-groups">
+      <div class="card">
+        <h3>Languages &amp; Querying</h3>
+        <span class="tag">SQL</span>
+        <span class="tag">Python</span>
+      </div>
+      <div class="card">
+        <h3>Data Analysis</h3>
+        <span class="tag">Pandas</span>
+        <span class="tag">NumPy</span>
+        <span class="tag">Data Cleaning</span>
+        <span class="tag">Exploratory Data Analysis</span>
+        <span class="tag">KPI Reporting</span>
+        <span class="tag">Data Quality Checks</span>
+      </div>
+      <div class="card">
+        <h3>Databases</h3>
+        <span class="tag">MySQL</span>
+        <span class="tag">MongoDB</span>
+        <span class="tag">SQL Server</span>
+      </div>
+      <div class="card">
+        <h3>BI &amp; Visualization</h3>
+        <span class="tag">Power BI</span>
+        <span class="tag">DAX</span>
+        <span class="tag">Streamlit</span>
+        <span class="tag">MS Excel (Pivot Tables, VLOOKUP, SUMIFS)</span>
+      </div>
+      <div class="card">
+        <h3>Tools</h3>
+        <span class="tag">Git</span>
+        <span class="tag">GitHub</span>
+        <span class="tag">VS Code</span>
+        <span class="tag">Jupyter Notebook</span>
+      </div>
+      <div class="card">
+        <h3>Core Competencies</h3>
+        <span class="tag">Analytical Thinking</span>
+        <span class="tag">Problem Solving</span>
+        <span class="tag">Attention to Detail</span>
+        <span class="tag">Documentation</span>
+        <span class="tag">Communication</span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ PROJECTS ============ -->
+<section id="projects" class="reveal">
+  <div class="wrap">
+    <h2 class="section-title">Projects</h2>
+    <div class="projects">
+      <article class="card project">
+        <h3>ShopSphere — E-Commerce Analytics Dashboard</h3>
+        <p class="tech">Power BI · DAX · Excel</p>
+        <p>An interactive Power BI report built on a star-schema model, sitting on top of a two-year sample retail dataset — roughly 2,100 orders, 900 customers and ₹7.2 Cr in revenue. Past the usual revenue, orders and region KPIs, it calls out the trouble spots: the category losing the most margin, the most-returned product, and 45 items that had slipped below their reorder point — a short list of exactly where to fix pricing, curb returns and dodge stock-outs.</p>
+        <div class="links">
+          <a class="btn btn-secondary btn-small" href="https://app.powerbi.com/view?r=eyJrIjoiNmE4M2JhYWQtMTNiMi00OWRmLTk3NmYtYjcwYzg1MjhjNjM0IiwidCI6Ijg5N2RlY2E3LWEzNWMtNDBmOS04Nzc0LWYyMmVkNmY1OWI2YyJ9" target="_blank" rel="noopener">View Live Dashboard</a>
+        </div>
+      </article>
+      <article class="card project">
+        <h3>Pardarshita — Railway Reservation System</h3>
+        <p class="tech">Python · Streamlit · SQL</p>
+        <p>Pardarshita ("transparency") is a railway ticket-booking app I built in Python with a Streamlit front end over a SQL database. It behaves like the real thing: live bookings, plus a first-in-first-out waitlist so seats go out in the exact order people queued — no line-jumping. A separate admin view runs train schedules, seat availability and live PNR status.</p>
+        <div class="links">
+          <a class="btn btn-secondary btn-small" href="https://github.com/akaUjjawal/Pardarshita" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn btn-secondary btn-small" href="https://pardarsheta.streamlit.app/" target="_blank" rel="noopener">Live Demo</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE (timeline — exactly two entries) ============ -->
+<section id="experience" class="reveal">
+  <div class="wrap">
+    <h2 class="section-title">Experience</h2>
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="when">Jun 2025 – Sep 2025</div>
+          <h3>Database Intern <span style="font-weight:400;color:var(--muted)">(SQL / MongoDB · Remote)</span></h3>
+          <div class="org">Tamizhan Skills</div>
+          <p>A remote internship built around databases — SQL alongside MongoDB, so both the neat tabular world and the messier document one. Day to day I wrote SQL to add, join and pull records, then cleaned and validated the results so the data stayed accurate and consistent.</p>
+        </div>
+        <div class="tl-item">
+          <div class="when">Jul 2024 – Aug 2024</div>
+          <h3>IT Trainee</h3>
+          <div class="org">ONGC Videsh Ltd. — Delhi</div>
+          <p>A month of corporate IT training on the plumbing behind a data centre — IPv4/IPv6 addressing, subnetting, VLAN segmentation and firewall setup. Not analytics, but a close look at how enterprise infrastructure actually fits together.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ EDUCATION & CERTIFICATIONS ============ -->
+<section id="education" class="reveal">
+  <div class="wrap">
+    <h2 class="section-title">Education &amp; Certifications</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Education</h3>
+        <p style="margin-bottom:.3em"><strong>B.Tech — Computer Science &amp; Engineering</strong></p>
+        <p style="margin-bottom:.3em;color:var(--muted)">Chaudhary Devi Lal University (CDLU), Sirsa · 2022 – 2026</p>
+        <p class="mono">CGPA: 7.6 / 10</p>
+      </div>
+      <div class="card" id="certs" style="scroll-margin-top:72px">
+        <h3>Certifications</h3>
+        <div class="cert"><span><a href="https://www.hackerrank.com/certificates/3af6a390d669" target="_blank" rel="noopener">SQL (Intermediate) — HackerRank</a></span><span class="year">2026</span></div>
+        <div class="cert"><span><a href="https://www.datacamp.com/certificate/PDA0016186249655" target="_blank" rel="noopener">Python Data Associate — DataCamp</a></span><span class="year">2026</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT (final section) ============ -->
+<section id="contact" class="contact reveal">
+  <div class="wrap">
+    <h2 class="section-title">Contact Me</h2>
+    <p class="subtag" style="margin-bottom:28px">Have a role in mind, a question, or a dataset that needs a second pair of eyes? Drop me a line.</p>
+    <div class="contact-grid">
+      <!-- left: direct details, social links, résumé -->
+      <div class="contact-info">
+        <p class="row">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          <a href="mailto:khandelwalujjawal39@gmail.com">khandelwalujjawal39@gmail.com</a>
+        </p>
+        <p class="row">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <a href="tel:+918287954832">+91 82879 54832</a>
+        </p>
+        <p class="row">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Delhi, India</span>
+        </p>
+        <div class="socials">
+          <a href="https://github.com/akaUjjawal" target="_blank" rel="noopener" aria-label="GitHub profile (opens in a new tab)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.4 13.4 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/ujjawal-analyst/" target="_blank" rel="noopener" aria-label="LinkedIn profile (opens in a new tab)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+        </div>
+        <a class="btn-teal" href="https://drive.google.com/file/d/1EXj7GtyLJFzu16N1Pe1GTShpn01Mwp5w/view?usp=sharing" target="_blank" rel="noopener">Download Resume</a>
+      </div>
+      <!-- right: message form. No server — Send opens your own email app. -->
+      <form id="contact-form" novalidate>
+        <label for="cf-name" class="sr-only">Your name</label>
+        <input id="cf-name" type="text" placeholder="Your name" autocomplete="name">
+        <label for="cf-email" class="sr-only">Your email</label>
+        <input id="cf-email" type="email" placeholder="Your email" autocomplete="email">
+        <label for="cf-msg" class="sr-only">Your message</label>
+        <textarea id="cf-msg" placeholder="Your message"></textarea>
+        <button class="btn-teal" type="submit">Send message</button>
+        <p class="form-note">Send opens your own email app with the message ready to go — nothing is stored on this site.</p>
+      </form>
+    </div>
+  </div>
+</section>
+</div><!-- /#post -->
+</main>
+<footer class="gated">
+  <div class="wrap">
+    <p style="margin:0;font-size:.85rem">© 2026 Ujjawal · Built as a single, dependency-free HTML file.</p>
+  </div>
+</footer>
+
+<script>
+/* =========================================================
+   All page behaviour. Plain vanilla JS — no frameworks.
+   ========================================================= */
+(function(){
+  "use strict";
+  // Respect visitors who ask for less motion.
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- 1. Gate: type the query, wait for a click, then reveal the site ---------- */
+  var QUERY   = "SELECT * FROM analyst WHERE name = 'Ujjawal';";
+  var typed   = document.getElementById("typed-sql");
+  var running = document.getElementById("hero-running");
+  var heroRes = document.getElementById("hero-result");
+  var runRow  = document.getElementById("hero-run-row");
+  var runBtn  = document.getElementById("hero-run");
+  var cursor  = document.getElementById("hero-cursor");
+
+  // Fade the single result row into the editor card.
+  function revealResult(){ running.style.display = "none"; heroRes.classList.add("show"); }
+
+  // Open the rest of the page (nav, sections, footer) and ease the visitor into it.
+  function unlock(){
+    document.documentElement.classList.add("revealed");
+    document.querySelectorAll(".kpi .num[data-target]").forEach(countUp);
+    var intro = document.getElementById("intro");
+    if(intro){
+      intro.classList.add("in");
+      if(!reduce){ setTimeout(function(){ intro.scrollIntoView({ behavior:"smooth", block:"start" }); }, 300); }
+    }
+  }
+
+  // Click handler: brief "Running…", show the result, then open the portfolio.
+  function runHero(){
+    runRow.style.display = "none";
+    cursor.style.display = "none";
+    if(reduce){ revealResult(); unlock(); return; }
+    running.style.display = "block";
+    setTimeout(function(){ revealResult(); setTimeout(unlock, 650); }, 700);
+  }
+
+  // Auto-type the query on load, then show (and focus) the Run button.
+  function typeQuery(){
+    runBtn.addEventListener("click", runHero);
+    function ready(){ runRow.style.display = "block"; runBtn.focus(); }
+    if(reduce){ typed.textContent = QUERY; ready(); return; }
+    var i = 0;
+    (function step(){
+      typed.textContent = QUERY.slice(0, i);
+      if(i++ < QUERY.length){ setTimeout(step, 45); }
+      else { ready(); }
+    })();
+  }
+  /* ---------- 2. KPI numbers count up from 0 ---------- */
+  function countUp(el){
+    var target = +el.dataset.target;
+    if(reduce){ el.textContent = target; return; }
+    var dur = 1200, t0 = performance.now();
+    requestAnimationFrame(function tick(now){
+      var p = Math.min((now - t0) / dur, 1);
+      el.textContent = Math.round(target * p);
+      if(p < 1){ requestAnimationFrame(tick); }
+    });
+  }
+
+  /* ---------- 3. Fade/slide sections in on scroll ---------- */
+  function setupReveal(){
+    var items = document.querySelectorAll(".reveal");
+    if(reduce || !("IntersectionObserver" in window)){
+      items.forEach(function(el){ el.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: .12 });
+    items.forEach(function(el){ io.observe(el); });
+  }
+
+  /* ---------- run everything once the page has loaded ---------- */
+  window.addEventListener("load", function(){
+    typeQuery();          // KPI count-up now runs inside unlock(), once the cards are visible
+    setupReveal();
+  });
+
+  /* ---------- 4. Contact form → opens the visitor's own email app (no backend) ---------- */
+  var cform = document.getElementById("contact-form");
+  if(cform){
+    cform.addEventListener("submit", function(e){
+      e.preventDefault();
+      var name = document.getElementById("cf-name").value.trim();
+      var from = document.getElementById("cf-email").value.trim();
+      var body = document.getElementById("cf-msg").value.trim();
+      var subject = "Portfolio message" + (name ? " from " + name : "");
+      var sig = (name || from) ? "\n\n— " + name + (from ? " <" + from + ">" : "") : "";
+      window.location.href =
+        "mailto:khandelwalujjawal39@gmail.com?subject=" +
+        encodeURIComponent(subject) + "&body=" + encodeURIComponent(body + sig);
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
